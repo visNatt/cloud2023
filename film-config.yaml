@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: film-testbed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: film-testbed
+  template:
+    metadata:
+      labels:
+        app: film-testbed
+    spec:
+      containers:
+        - name: film-container
+          image: patchapong/testbed-usertime:v1
+          ports:
+            - containerPort: 30005
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: film-ingress
+spec:
+  rules:
+    - host: film-testbed.iotcloudserve.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: your-service-name
+                port:
+                  number: 80
